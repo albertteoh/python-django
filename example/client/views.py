@@ -14,7 +14,7 @@ def client_index(request):
 
 @tracing.trace()
 def client_simple(request):
-    url = "http://localhost:8000/server/simple"
+    url = "http://127.0.0.1:8000/server/simple"
     new_request = six.moves.urllib.request.Request(url)
     inject_as_headers(tracing, tracing.tracer.active_span, new_request)
     try:
@@ -25,7 +25,7 @@ def client_simple(request):
 
 @tracing.trace()
 def client_log(request):
-    url = "http://localhost:8000/server/log"
+    url = "http://127.0.0.1:8000/server/log"
     new_request = six.moves.urllib.request.Request(url)
     inject_as_headers(tracing, tracing.tracer.active_span, new_request)
     try:
@@ -36,7 +36,7 @@ def client_log(request):
 
 @tracing.trace()
 def client_child_span(request):
-    url = "http://localhost:8000/server/childspan"
+    url = "http://127.0.0.1:8000/server/childspan"
     new_request = six.moves.urllib.request.Request(url)
     inject_as_headers(tracing, tracing.tracer.active_span, new_request)
     try:

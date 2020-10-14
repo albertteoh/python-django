@@ -14,6 +14,7 @@ import os
 import sys
 import django_opentracing
 import opentracing
+from jaeger_client import Config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -43,14 +44,14 @@ INSTALLED_APPS = [
     'django_opentracing'
 ]
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django_opentracing.OpenTracingMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    #'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -115,12 +116,27 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # OpenTracing settings
+SERVICE_NAME = "python-django-example"
+
+def tracer():
+    config = Config(
+        config={
+            'sampler': {
+                'type': 'const',
+                'param': 1,
+            },
+            'logging': True,
+        },
+        service_name=SERVICE_NAME,
+        validate=True
+    )
+    return config.initialize_tracer()
 
 # default tracer is opentracing.Tracer(), which does nothing
-OPENTRACING_TRACING = django_opentracing.DjangoTracing()
+OPENTRACING_TRACING = django_opentracing.DjangoTracing(tracer())
 
 # default is False
-OPENTRACING_TRACE_ALL = False 
+OPENTRACING_TRACE_ALL = False
 
 # default is []
 OPENTRACING_TRACED_ATTRIBUTES = ['META']
